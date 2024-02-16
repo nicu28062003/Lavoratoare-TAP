@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.util.HashMap;
+import java.util.Map;
 
 class MyClass {
     private String text;
@@ -7,11 +9,7 @@ class MyClass {
         this.text = text;
     }
 
-    public void displayText() {
-        System.out.println("Textul din MyClass: " + text);
-    }
-
-    public void modifyText() {
+    public void modifyAndDisplayText() {
         StringBuilder stringBuilder = new StringBuilder(text);
         stringBuilder.reverse();
         text = stringBuilder.toString();
@@ -28,33 +26,29 @@ public class Main {
 
         System.out.println("Introduceti lungimea cuvintelor: ");
         int lungimeSpecificata = scanner.nextInt();
+        scanner.nextLine(); // Consumăm linia rămasă pentru a evita erori de citire.
 
         MyClass myObject = new MyClass(enunt);
 
-        myObject.displayText();
+        myObject.modifyAndDisplayText();
 
-        myObject.modifyText();
+        Map<String, Integer> cuvinteExtrase = extrageCuvinteSiNumara(enunt, lungimeSpecificata);
 
-        String[] cuvinteExtrase = extrageCuvinte(enunt, lungimeSpecificata);
-
-        System.out.println("Cuvintele cu lungimea " + lungimeSpecificata + " care încep cu o consoană:");
-        for (String cuvant : cuvinteExtrase) {
-            System.out.println(cuvant);
-        }
+        System.out.println("Cuvintele cu lungimea " + lungimeSpecificata + " care încep cu o consoană (si numărul de aparitii):");
+        cuvinteExtrase.forEach((cuvant, aparitii) -> System.out.println(cuvant + " - " + aparitii + " ori"));
     }
 
-    // Metoda pentru extragerea cuvintelor cu lungimea specificată care încep cu o consoană
-    private static String[] extrageCuvinte(String text, int lungime) {
+    private static Map<String, Integer> extrageCuvinteSiNumara(String text, int lungime) {
         String[] cuvinte = text.split("\\s+");
-        java.util.List<String> cuvinteExtrase = new java.util.ArrayList<>();
+        Map<String, Integer> cuvinteExtrase = new HashMap<>();
 
         for (String cuvant : cuvinte) {
             if (cuvant.length() == lungime && isConsonant(cuvant.charAt(0))) {
-                cuvinteExtrase.add(cuvant);
+                cuvinteExtrase.put(cuvant, cuvinteExtrase.getOrDefault(cuvant, 0) + 1);
             }
         }
 
-        return cuvinteExtrase.toArray(new String[0]);
+        return cuvinteExtrase;
     }
 
     private static boolean isConsonant(char ch) {
